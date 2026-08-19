@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Missão 1</title>
+    <style>
+:root{
+    --verde-tec-ninjas:#a3e500;
+    --azul-escuro-acinzentado:#1c2331;
+    --laranja:#ff5e00;
+    --fundo:#f0f4f8;
+    --branco:#ffffff;
+    --texto:#2c3e50;
+    --verde-escuro:#05472a;
+    --vermelho-erro:#ff3b30;
+}
+body{
+    background-color: var(--verde-escuro);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--branco);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Estilização do Card com as suas cores */
+.card {
+    background-color: var(--azul-escuro-acinzentado);
+    border: 2px solid var(--verde-tec-ninjas);
+    border-radius: 12px;
+    padding: 25px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.card h3 {
+    color: var(--verde-tec-ninjas);
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-size: 19px;
+}
+
+.card h5{
+    color: var(--verde-tec-ninjas);
+    font-size: 12px;
+}
+
+.card h2{
+    color: var(--verde-tec-ninjas);
+    font-size: 22px;
+}
+
+.status {
+    color: #a0aec0;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* Estrutura dos Contadores interna */
+.contador-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 12px 0;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+}
+
+.contador-label {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+/* Cores específicas baseadas na sua paleta */
+.acertos .contador-label { color: var(--verde-tec-ninjas); }
+.erros .contador-label { color: var(--vermelho-erro); }
+.incompletas .contador-label { color: var(--laranja); }
+
+.contador-valor {
+    font-size: 18px;
+    font-weight: bold;
+    min-width: 25px;
+}
+
+.botoes-controle button {
+    padding: 4px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    margin-left: 4px;
+    transition: background 0.2s;
+}
+
+.btn-subtrair { 
+    background-color: #4a5568; 
+    color: var(--branco); 
+}
+
+/* Botões de soma usando sua identidade */
+.acertos .btn-somar { background-color: var(--verde-tec-ninjas); color: var(--azul-escuro-acinzentado); }
+.erros .btn-somar { background-color: var(--vermelho-erro); color: var(--branco); }
+.incompletas .btn-somar { background-color: var(--laranja); color: var(--branco); }
+
+.botoes-controle button:hover {
+    opacity: 0.9;
+}
+    </style>
+</head>
+<body>
+    <article class="card">
+        <h2>Missão 6</h2>
+        <div class="card-icon"><img src="Missão 6.png" alt="Icone Missão" style="max-width: 200px;"></div>
+        <h3>Correria das Formigas Cortadeiras</h3>
+        <h5>As formigas-cortadeiras trabalham juntas para alimentar um jardim de fungos subterrâneo. Guie as formigas de volta ao ninho — mas, se você se mover rápido demais, poderá espalhar as folhas que elas coletaram.</h5>
+        <p class="status">Controle de Pontuação</p>
+        
+        <!-- Área dos Contadores -->
+        <div class="painel-contadores">
+            <!-- Acertos -->
+            <div class="contador-linha acertos">
+                <span class="contador-label">🎯 Acertos</span>
+                <span class="contador-valor" id="txt-acertos">0</span>
+                <div class="botoes-controle">
+                    <button class="btn-subtrair" onclick="atualizarContador('acertos', -1)">-</button>
+                    <button class="btn-somar" onclick="atualizarContador('acertos', 1)">+</button>
+                </div>
+            </div>
+
+            <!-- Erros -->
+            <div class="contador-linha erros">
+                <span class="contador-label">❌ Erros</span>
+                <span class="contador-valor" id="txt-erros">0</span>
+                <div class="botoes-controle">
+                    <button class="btn-subtrair" onclick="atualizarContador('erros', -1)">-</button>
+                    <button class="btn-somar" onclick="atualizarContador('erros', 1)">+</button>
+                </div>
+            </div>
+
+            <!-- Incompletas -->
+            <div class="contador-linha incompletas">
+                <span class="contador-label">⏳ Incompleta</span>
+                <span class="contador-valor" id="txt-incompletas">0</span>
+                <div class="botoes-controle">
+                    <button class="btn-subtrair" onclick="atualizarContador('incompletas', -1)">-</button>
+                    <button class="btn-somar" onclick="atualizarContador('incompletas', 1)">+</button>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <script>
+        // Objeto que gerencia o estado da missão atual
+        const placarMissao = {
+            acertos: 0,
+            erros: 0,
+            incompletas: 0
+        };
+
+        // Função que altera os valores e atualiza o card
+        function atualizarContador(tipo, alteracao) {
+            if (placarMissao[tipo] + alteracao >= 0) {
+                placarMissao[tipo] += alteracao;
+                document.getElementById(`txt-${tipo}`).innerText = placarMissao[tipo];
+            }
+        }
+    </script>
+</body>
+</html>
