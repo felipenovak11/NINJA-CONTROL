@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle Missão 1</title>
+    <title>Controle Missão 5</title>
     <style>
 :root{
     --verde-tec-ninjas:#a3e500;
@@ -24,6 +24,8 @@ body{
     align-items: center;
     min-height: 100vh;
     margin: 0;
+    gap: 30px;
+    flex-wrap: wrap;
 }
 
 /* Estilização do Card com as suas cores */
@@ -111,6 +113,71 @@ body{
 .botoes-controle button:hover {
     opacity: 0.9;
 }
+
+/* Botão para gerar o gráfico */
+.btn-gerar-grafico {
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: var(--verde-tec-ninjas);
+    color: var(--azul-escuro-acinzentado);
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-gerar-grafico:hover {
+    opacity: 0.9;
+}
+
+/* Container do Gráfico CSS */
+.grafico-container {
+    background-color: var(--azul-escuro-acinzentado);
+    border: 2px solid var(--verde-tec-ninjas);
+    border-radius: 12px;
+    padding: 25px;
+    width: 300px;
+    height: 350px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    display: none; /* Inicia oculto */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* O círculo da pizza gerado puramente por CSS */
+.pizza-css {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: #4a5568; /* Cor cinza padrão antes de clicar */
+    transition: background 0.3s ease;
+    margin-bottom: 20px;
+}
+
+/* Legendas customizadas embaixo do gráfico */
+.grafico-legendas {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    flex-wrap: wrap;
+}
+.legenda-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.quadradinho {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
     </style>
 </head>
 <body>
@@ -153,23 +220,94 @@ body{
                 </div>
             </div>
         </div>
+
+        <button class="btn-gerar-grafico" onclick="gerarGrafico()">📊 Gerar Gráfico</button>
     </article>
 
+        <!-- Caixa do Gráfico Independente -->
+    <div class="grafico-container" id="containerDoGrafico">
+        <div class="pizza-css" id="pizzaVisual"></div>
+        <div class="grafico-legendas">
+            <div class="legenda-item">
+                <div class="quadradinho" style="background-color: var(--verde-tec-ninjas);"></div> 
+                Acertos: <span id="pct-acertos">0%</span>
+            </div>
+            <div class="legenda-item">
+                <div class="quadradinho" style="background-color: var(--vermelho-erro);"></div> 
+                Erros: <span id="pct-erros">0%</span>
+            </div>
+            <div class="legenda-item">
+                <div class="quadradinho" style="background-color: var(--laranja);"></div> 
+                Incompletas: <span id="pct-incompletas">0%</span>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Objeto que gerencia o estado da missão atual
+    
         const placarMissao = {
             acertos: 0,
             erros: 0,
             incompletas: 0
         };
 
-        // Função que altera os valores e atualiza o card
+        let graficoVisivel = false;
+
         function atualizarContador(tipo, alteracao) {
             if (placarMissao[tipo] + alteracao >= 0) {
                 placarMissao[tipo] += alteracao;
                 document.getElementById(`txt-${tipo}`).innerText = placarMissao[tipo];
+
+                // Atualiza a pizza e os textos das percentagens na hora
+                if (graficoVisivel) {
+                    desenharPizza();
+                }
             }
         }
+
+        function gerarGrafico() {
+            document.getElementById('containerDoGrafico').style.display = 'flex';
+            graficoVisivel = true;
+            desenharPizza();
+        }
+
+        function desenharPizza() {
+            const total = placarMissao.acertos + placarMissao.erros + placarMissao.incompletas;
+            const pizza = document.getElementById('pizzaVisual');
+
+            if (total === 0) {
+                pizza.style.background = '#4a5568';
+                document.getElementById('pct-acertos').innerText = '0%';
+                document.getElementById('pct-erros').innerText = '0%';
+                document.getElementById('pct-incompletas').innerText = '0%';
+                return;
+            }
+
+            // 1. Calcula as percentagens reais arredondadas para uma casa decimal
+            const pctAcertos = ((placarMissao.acertos / total) * 100).toFixed(1);
+            const pctErros = ((placarMissao.erros / total) * 100).toFixed(1);
+            const pctIncompletas = ((placarMissao.incompletas / total) * 100).toFixed(1);
+
+            // 2. Atualiza os textos dos elementos HTML na legenda
+            document.getElementById('pct-acertos').innerText = `${pctAcertos}%`;
+            document.getElementById('pct-erros').innerText = `${pctErros}%`;
+            document.getElementById('pct-incompletas').innerText = `${pctIncompletas}%`;
+
+            // 3. Mantém o cálculo dos graus para renderizar o círculo do CSS
+            const grauAcertos = (placarMissao.acertos / total) * 360;
+            const grauErros = (placarMissao.erros / total) * 360;
+
+            const fimAcertos = grauAcertos;
+            const fimErros = fimAcertos + grauErros;
+
+            pizza.style.background = `conic-gradient(
+                var(--verde-tec-ninjas) 0deg ${fimAcertos}deg,
+                var(--vermelho-erro) ${fimAcertos}deg ${fimErros}deg,
+                var(--laranja) ${fimErros}deg 360deg
+            )`;
+        }
     </script>
+
 </body>
 </html>
+
