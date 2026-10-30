@@ -3,147 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de missões</title>
+    <meta name="description" content="Painel de controle das missões da equipe TEC_NINJAS.">
+    <title>Controle de missões | TEC_NINJAS</title>
     <link rel="stylesheet" href="style.css">
-<script>
-    // Seleciona a janela que possui o efeito de scroll
-    const janela = document.querySelector('.carrossel-janela');
-    const btnAnt = document.getElementById('btn-ant');
-    const btnProx = document.getElementById('btn-prox');
-
-    // Ao clicar na seta da direita, avança o tamanho exato da janela visível
-    btnProx.addEventListener('click', () => {
-        const larguraJanela = janela.offsetWidth + 30; // Largura visível + o gap
-        janela.scrollLeft += larguraJanela;
-    });
-
-    // Ao clicar na seta da esquerda, volta o tamanho exato da janela visível
-    btnAnt.addEventListener('click', () => {
-        const larguraJanela = janela.offsetWidth + 30;
-        janela.scrollLeft -= larguraJanela;
-    });
-</script>
-
-
 </head>
 <body>
+
     <header>
         <div class="logo-Tec_Ninjas">
-            <img src="Logo_Tec_Ninjas.png">
+            <img src="Logo_Tec_Ninjas.png" alt="Logo da equipe TEC_NINJAS">
         </div>
         <div class="titulo">
             <h1>TEC_ <span>NINJAS</span></h1>
         </div>
-        <div>
     </header>
 
     <main>
-    <div class="carrossel-container">
-        <!-- Botão Esquerdo com comando direto de clique -->
-        <button class="btn-seta btn-esquerda" onclick="document.querySelector('.carrossel-janela').scrollLeft -= (document.querySelector('.carrossel-janela').offsetWidth + 30)">&#10094;</button>
-
-        <!-- Janela que esconde os cards de fora -->
-        <div class="carrossel-janela">
-            <section class="missoes-grid">
-                
-                <article class="card">
-                    <h3>Missão 1</h3>
-                    <div class="img-missoes"><img src="Missão 1.png"></div>
-                    <a href="ControleM1.html" class="botao">Ir para o controle da missão 1</a>
-                </article>
-        
-                <article class="card">
-                    <h3>Missão 2</h3>
-                    <div class="img-missoes"><img src="Missão 2.png"></div>
-                    <a href="ControleM2.html" class="botao">Ir para o controle da missão 2</a>
-                </article>
-
-                <article class="card">
-                    <h3>Missão 3</h3>
-                    <div class="img-missoes"><img src="Missão 3.png"></div>
-                    <a href="ControleM3.html" class="botao">Ir para o controle da missão 3</a> 
-                </article>
-
-                <article class="card">
-                    <h3>Missão 4</h3>
-                    <div class="img-missoes"><img src="Missão 4.png"></div>
-                    <a href="ControleM4.html" class="botao">Ir para o controle da missão 4</a>
-                </article>
-
-                <article class="card">
-                    <h3>Missão 5</h3>
-                    <div class="img-missoes"><img src="Missão 5.png"></div>
-                    <a href="ControleM5.html" class="botao">Ir para o controle da missão 5</a>
-                </article>
-
-                <article class="card">
-                    <h3>Missão 6</h3>
-                    <div class="img-missoes"><img src="Missão 6.png"></div>
-                    <a href="ControleM6.html" class="botao">Ir para o controle da missão 6</a>
-                </article>
-
-                <article class="card">
-                    <h3>Missão 7</h3>
-                    <div class="img-missoes"><img src="Missão 7.png"></div>
-                    <a href="ControleM7.html" class="botao">Ir para o controle da missão 7</a>
-                </article>
-
-                <article class="card">
-                    <h3>Missão 8</h3>
-                    <div class="img-missoes"><img src="Missão 8.png"></div>
-                    <a href="ControleM8.html" class="botao">Ir para o controle da missão 8</a>
-                </article>
-
-                <article class="card">
-                    <h3>Missão 9</h3>
-                    <div class="img-missoes"><img src="Missão 9.png"></div>
-                    <a href="ControleM9.html" class="botao">Ir para o controle da missão 9</a>
-                </article>
-
-                <article class="card">
-                    <h3>Missão 10</h3>
-                    <div class="img-missoes"><img src="Missão 10.png"></div>
-                    <a href="ControleM10.html" class="botao">Ir para o controle da missão 10</a>
-                </article>
-
-                <article class="card">
-                    <h3>Missão 11</h3>
-                    <div class="img-missoes"><img src="Missão 11.png"></div>
-                    <a href="ControleM11.html" class="botao">Ir para o controle da missão 11</a>
-                </article>
-
-                <article class="card">
-                    <h3>Missão 12</h3>
-                    <div class="img-missoes"><img src="Missão 12.png"></div>
-                    <a href="ControleM12.html" class="botao">Ir para o controle da missão 12</a>
-                </article>
-
-                <article class="card">
-                    <h3>Missão 13</h3>
-                    <div class="img-missoes"><img src="Missão 13.png"></div>
-                    <a href="ControleM13.html" class="botao">Ir para o controle da missão 13</a>
-                </article>
-
-                <article class="card">
-                    <h3>Missão 14</h3>
-                    <div class="img-missoes"><img src="Missão 14.png"></div>
-                    <a href="ControleM14.html" class="botao">Ir para o controle da missão 14</a>
-                </article>
-
-                <article class="card">
-                    <h3>Missão 15</h3>
-                    <div class="img-missoes"><img src="Missão 15.png"></div>
-                    <a href="ControleM15.html" class="botao">Ir para o controle da missão 15</a>
-                </article>
-                
-            </section>
+        <div class="acoes-topo">
+            <a href="combo.html" class="botao">Montar combo de missões</a>
+            <a href="historico.html" class="botao">Ver histórico de combos</a>
         </div>
 
-        <!-- Botão Direito com comando direto de clique -->
-        <button class="btn-seta btn-direita" onclick="document.querySelector('.carrossel-janela').scrollLeft += (document.querySelector('.carrossel-janela').offsetWidth + 30)">&#10095;</button>
-    </div>
-</main>
+        <div class="carrossel-container">
+            <button class="btn-seta" id="btn-ant" aria-label="Missões anteriores">&#10094;</button>
 
-    <footer></footer>
+            <div class="carrossel-janela" id="janela">
+                <!-- Os cards são criados pelo script no final da página -->
+                <section class="missoes-grid" id="missoes"></section>
+            </div>
+
+            <button class="btn-seta" id="btn-prox" aria-label="Próximas missões">&#10095;</button>
+        </div>
+    </main>
+
+    <script>
+        // ===== Configuração =====
+        const TOTAL_MISSOES = 15; // para adicionar a missão 16, basta mudar este número
+        const GAP = 30;           // mesmo valor do "gap" no style.css
+
+        // ===== Cria os cards =====
+        const lista = document.getElementById('missoes');
+
+        for (let n = 1; n <= TOTAL_MISSOES; n++) {
+            const imagem = encodeURI(`Missão ${n}.png`); // se renomear as imagens, troque aqui
+            lista.insertAdjacentHTML('beforeend', `
+                <article class="card">
+                    <h3>Missão ${n}</h3>
+                    <div class="img-missoes">
+                        <img src="${imagem}" alt="Imagem da missão ${n}" loading="lazy">
+                    </div>
+                    <a href="ControleM${n}.html" class="botao">Ir para o controle da missão ${n}</a>
+                </article>
+            `);
+        }
+
+        // ===== Setas do carrossel =====
+        const janela = document.getElementById('janela');
+        const btnAnt = document.getElementById('btn-ant');
+        const btnProx = document.getElementById('btn-prox');
+
+        function passo() {
+            return janela.clientWidth + GAP;
+        }
+
+        btnProx.addEventListener('click', () => janela.scrollBy({ left: passo() }));
+        btnAnt.addEventListener('click', () => janela.scrollBy({ left: -passo() }));
+
+        // Desativa a seta quando chega no começo ou no fim
+        function atualizarSetas() {
+            btnAnt.disabled = janela.scrollLeft <= 0;
+            btnProx.disabled = janela.scrollLeft + janela.clientWidth >= janela.scrollWidth - 1;
+        }
+
+        janela.addEventListener('scroll', atualizarSetas);
+        window.addEventListener('resize', atualizarSetas);
+        atualizarSetas();
+    </script>
+
 </body>
 </html>

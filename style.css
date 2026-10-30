@@ -1,200 +1,223 @@
-:root{
-    --verde-tec-ninjas:#a3e500;
-    --azul-escuro-acinzentado:#1c2331;
-    --laranja:#ff5e00;
-    --fundo:#f0f4f8;
-    --branco:#ffffff;
-    --texto:#2c3e50;
-    --verde-escuro:#05472a;
-
+:root {
+    --verde-tec-ninjas: #a3e500;
+    --azul-escuro-acinzentado: #1c2331;
+    --laranja: #ff5e00;
+    --branco: #ffffff;
+    --verde-escuro: #05472a;
 }
 
-body{
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
     background-color: var(--verde-escuro);
-    font-family: 'Sagoe UI', sans-serif;
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
     color: var(--verde-tec-ninjas);
 }
-header{
+
+/* ===== Cabeçalho ===== */
+header {
     background-color: var(--azul-escuro-acinzentado);
     color: var(--branco);
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; /* logo à esquerda, título bem no centro */
     align-items: center;
     padding: 20px 50px;
-    justify-content: space-between;
     border-bottom: 5px solid var(--verde-tec-ninjas);
 }
 
-.logo-Tec_Ninjas img{
+.logo-Tec_Ninjas img {
     height: 100px;
+    width: auto;
+    display: block;
 }
 
-.titulo h1 span{
+.titulo h1 {
+    margin: 0;
+}
+
+.titulo h1 span {
     color: var(--verde-tec-ninjas);
 }
 
-.spacer{
-    width: 100px;
-}
-
-img{
-    max-width: 200px;
-    border-radius: 10px;
-    border-color: var(--verde-tec-ninjas);
-    border: 2px solid;
-}
-
-.missoes-grid{
-    display: flex;
-    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
-    gap: 30px;
-}
-
-.card{
-    background-color:var(--azul-escuro-acinzentado);
-    padding: 40px 40px 40px 40px ;
-    border-radius: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    display: grid;
-    flex-direction: column;
-    justify-content: flex-end;
-    grid-template-columns: 1fr;
-    border: 2px solid transparent;
-    align-items: center;
-}
-
-.btn-toogle, .btn-action{
-    background-color: var(--verde-tec-ninjas);
-    color: var(--branco);
-    border: none;
-    padding: 14px;
-    cursor: pointer;
-    width: 300px;
-    border-radius: 12px;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
+/* ===== Carrossel ===== */
 .carrossel-container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    max-width: 1140px; 
+    gap: 16px;
+    max-width: 1240px;
     margin: 40px auto;
-    position: relative;
+    padding: 0 16px;
 }
 
 .carrossel-janela {
-    overflow: hidden; /* Obriga a esconder o que passa de 3 cards */
-    width: 100%;
-    scroll-behavior: smooth; /* Cria o efeito visual de passar deslizando */
+    flex: 1;
+    min-width: 0; /* deixa a janela encolher em vez de estourar a tela */
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+
+.carrossel-janela::-webkit-scrollbar {
+    display: none;
 }
 
 .missoes-grid {
-    display: flex; /* Alinha todos os 15 cards em uma única linha comprida */
+    display: flex;
     gap: 30px;
     padding: 10px 0;
 }
 
-.botao {
-  display: block;
-  padding: 12px 24px;
-  background-color: var(--verde-tec-ninjas);
-  color: var(--branco);
-  text-decoration: none;
-  border-radius: 10px;
-  font-weight: bold;
-  font-family: sans-serif;
-  transition: background 0.3s ease;
-  text-align: center;
-  font-size: 15px;
-}
-
+/* ===== Cards ===== */
 .card {
+    flex: 0 0 calc((100% - 60px) / 3); /* 3 cards por tela */
+    scroll-snap-align: start;
     background-color: var(--azul-escuro-acinzentado);
-    padding: 10px;
+    padding: 24px;
     border-radius: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    border: 2px solid transparent;
-    flex: 0 0 360px; /* Garante tamanho fixo para caber 3 por tela */
-    box-sizing: border-box;
-    flex: 0 0 calc((100% - 60px) / 3); 
-    box-sizing: border-box;
+    gap: 16px;
 }
 
-.card h3{
+.card h3 {
+    margin: 0;
     font-size: 25px;
 }
 
-.btn-seta {
+.img-missoes {
+    width: 100%;
+}
+
+.img-missoes img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 2px solid var(--verde-tec-ninjas);
+}
+
+/* ===== Botões ===== */
+.botao {
+    display: block;
+    width: 100%;
+    margin-top: auto; /* mantém o botão sempre na base do card */
+    padding: 12px 24px;
     background-color: var(--verde-tec-ninjas);
-    color: var(--azul-escuro-acinzentado);
-    border: none;
-    font-size: 24px;
+    color: var(--azul-escuro-acinzentado); /* texto escuro: lê bem sobre o verde */
+    text-decoration: none;
+    text-align: center;
+    border-radius: 10px;
     font-weight: bold;
+    font-size: 15px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.botao:hover {
+    background-color: var(--laranja);
+    color: var(--branco);
+}
+
+.btn-seta {
+    flex-shrink: 0;
     width: 50px;
     height: 50px;
+    border: none;
     border-radius: 50%;
+    background-color: var(--verde-tec-ninjas);
+    color: var(--azul-escuro-acinzentado);
+    font-size: 24px;
+    font-weight: bold;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    transition: 0.3s;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, opacity 0.3s ease;
 }
 
-.btn-esquerda { left: -60px; }
-.btn-direita { right: -60px; }
+.btn-seta:hover:not(:disabled) {
+    background-color: var(--laranja);
+    color: var(--branco);
+}
 
-/* ==========================================================================
-   CONFIGURAÇÕES PARA CELULAR E TABLETS (TELAS ATÉ 768px)
-   ========================================================================== */
+.btn-seta:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+/* Foco visível para quem navega com o teclado */
+.botao:focus-visible,
+.btn-seta:focus-visible {
+    outline: 3px solid var(--branco);
+    outline-offset: 3px;
+}
+
+/* ===== Botão do combo ===== */
+.acoes-topo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin: 40px 16px 0;
+}
+
+.acoes-topo .botao {
+    width: auto;
+    margin-top: 0;
+    padding: 14px 32px;
+    font-size: 17px;
+}
+
+/* ===== Tablets ===== */
+@media (max-width: 1024px) {
+    .card {
+        flex-basis: calc((100% - 30px) / 2); /* 2 cards por tela */
+    }
+}
+
+/* ===== Celulares ===== */
 @media (max-width: 768px) {
     header {
-        padding: 15px 20px; /* Reduz o espaço interno para não apertar */
-        flex-direction: column; /* Alinha a logo e o título um embaixo do outro */
+        grid-template-columns: 1fr;
+        justify-items: center;
         gap: 10px;
+        padding: 15px 20px;
         text-align: center;
     }
 
     .logo-Tec_Ninjas img {
-        height: 70px; /* Diminui um pouco a logo no celular */
+        height: 70px;
     }
 
     .carrossel-container {
-        margin: 20px 10px;
-        max-width: 100%;
-    }
-
-    .carrossel-janela {
-        overflow-x: auto; /* Permite arrastar os cards com o dedo no celular */
-        scrollbar-width: none; /* Linha opcional: esconde a barra de rolagem no Firefox */
-    }
-    
-    .carrossel-janela::-webkit-scrollbar {
-        display: none; /* Linha opcional: esconde a barra de rolagem no Chrome/Safari */
+        margin: 20px 0;
+        padding: 0 10px;
     }
 
     .card {
-        /* Mostra apenas 1 card por vez na tela do celular, deixando margem para ver o próximo */
-        flex: 0 0 calc(100% - 20px); 
+        flex-basis: 85%; /* 1 card por vez, deixando uma "espiada" do próximo */
         padding: 20px;
     }
 
-    img {
-        max-width: 100%; /* Faz a imagem do card se ajustar perfeitamente ao tamanho dele */
-        height: auto;
+    /* No celular o usuário arrasta com o dedo */
+    .btn-seta {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .carrossel-janela {
+        scroll-behavior: auto;
     }
 
-    /* Esconde ou reposiciona os botões de seta, pois no celular o usuário arrasta com o dedo */
+    .botao,
     .btn-seta {
-        display: none; 
+        transition: none;
     }
 }

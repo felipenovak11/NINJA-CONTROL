@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combo de missões | TEC_NINJAS</title>
+    <style>
+:root{
+    --verde-tec-ninjas:#a3e500;
+    --azul-escuro-acinzentado:#1c2331;
+    --laranja:#ff5e00;
+    --branco:#ffffff;
+    --verde-escuro:#05472a;
+    --vermelho-erro:#ff3b30;
+    --cinza:#4a5568;
+}
+
+*{ box-sizing: border-box; }
+
+[hidden]{ display: none !important; }
+
+body{
+    margin: 0;
+    padding: 30px 16px 60px;
+    background-color: var(--verde-escuro);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--branco);
+}
+
+/* ===== Topo ===== */
+.topo{
+    max-width: 1100px;
+    margin: 0 auto 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.topo h1{ margin: 0; font-size: 26px; color: var(--verde-tec-ninjas); }
+.voltar{ color: var(--verde-tec-ninjas); font-weight: bold; text-decoration: none; }
+.voltar:hover{ text-decoration: underline; }
+
+/* ===== Caixas (mesmo visual dos cards individuais) ===== */
+.caixa{
+    background-color: var(--azul-escuro-acinzentado);
+    border: 2px solid var(--verde-tec-ninjas);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+.caixa h2{ margin: 0 0 6px; font-size: 22px; color: var(--verde-tec-ninjas); }
+.dica{ margin: 0 0 18px; color: #a0aec0; font-size: 14px; }
+
+/* ===== Etapa 1: escolher missões ===== */
+#etapa-escolha{ max-width: 720px; margin: 0 auto; }
+
+.lista-missoes{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.chip{ position: relative; display: block; }
+.chip input{ position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.chip span{
+    display: block;
+    padding: 10px 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 8px;
+    background-color: rgba(255,255,255,0.05);
+    border: 2px solid transparent;
+    transition: background-color .2s, color .2s;
+}
+.chip input:checked + span{
+    background-color: var(--verde-tec-ninjas);
+    color: var(--azul-escuro-acinzentado);
+}
+.chip input:focus-visible + span{ outline: 3px solid var(--branco); outline-offset: 2px; }
+
+/* ===== Botões ===== */
+.acoes{ display: flex; flex-wrap: wrap; gap: 10px; }
+.btn{
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: var(--cinza);
+    color: var(--branco);
+    transition: opacity .2s;
+}
+.btn:hover:not(:disabled){ opacity: .9; }
+.btn:disabled{ opacity: .4; cursor: default; }
+.btn-principal{ background-color: var(--verde-tec-ninjas); color: var(--azul-escuro-acinzentado); }
+.btn:focus-visible, .btn-contador:focus-visible{ outline: 3px solid var(--branco); outline-offset: 2px; }
+
+/* ===== Etapa 2: placar de cada missão ===== */
+#etapa-placar .acoes{ max-width: 1100px; margin: 0 auto 24px; justify-content: center; }
+
+.cards-missoes{
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+.card-missao{ width: 300px; text-align: center; padding: 20px 25px; }
+.card-missao h2{ margin-bottom: 12px; }
+
+.contador-linha{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    padding: 8px 12px;
+    background-color: rgba(255,255,255,0.05);
+    border-radius: 6px;
+}
+.contador-label{ font-size: 15px; font-weight: bold; }
+.contador-valor{ font-size: 18px; font-weight: bold; min-width: 25px; }
+.acertos .contador-label{ color: var(--verde-tec-ninjas); }
+.erros .contador-label{ color: var(--vermelho-erro); }
+.incompletas .contador-label{ color: var(--laranja); }
+
+.btn-contador{
+    padding: 4px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    margin-left: 4px;
+}
+.btn-contador:hover{ opacity: .9; }
+.btn-subtrair{ background-color: var(--cinza); color: var(--branco); }
+.acertos .btn-somar{ background-color: var(--verde-tec-ninjas); color: var(--azul-escuro-acinzentado); }
+.erros .btn-somar{ background-color: var(--vermelho-erro); color: var(--branco); }
+.incompletas .btn-somar{ background-color: var(--laranja); color: var(--branco); }
+
+/* ===== Gráfico do combo ===== */
+.grafico-combo{
+    max-width: 640px;
+    margin: 30px auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.pizza-css{
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: var(--cinza);
+    margin: 10px 0 20px;
+}
+.grafico-legendas{
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    font-size: 13px;
+    font-weight: bold;
+    flex-wrap: wrap;
+}
+.legenda-item{ display: flex; align-items: center; gap: 6px; }
+.quadradinho{ width: 12px; height: 12px; border-radius: 3px; }
+.c-acertos{ background-color: var(--verde-tec-ninjas); }
+.c-erros{ background-color: var(--vermelho-erro); }
+.c-incompletas{ background-color: var(--laranja); }
+
+.por-missao{ width: 100%; margin-top: 26px; }
+.por-missao h3{ margin: 0 0 10px; font-size: 15px; color: var(--verde-tec-ninjas); }
+.linha-barra{ display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 13px; }
+.rotulo-barra{ width: 34px; font-weight: bold; }
+.barra{ flex: 1; display: flex; height: 14px; border-radius: 7px; overflow: hidden; background-color: var(--cinza); }
+.total-barra{ width: 30px; text-align: right; color: #a0aec0; }
+
+/* ===== Salvar combo ===== */
+.salvar-combo{
+    max-width: 640px;
+    margin: 30px auto 0;
+}
+.linha-salvar{ display: flex; flex-wrap: wrap; gap: 10px; }
+.linha-salvar input{
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 2px solid var(--cinza);
+    background-color: rgba(255,255,255,0.05);
+    color: var(--branco);
+    font-size: 15px;
+}
+.linha-salvar input:focus-visible{ outline: 3px solid var(--branco); outline-offset: 2px; }
+#msg-salvar{ min-height: 1.4em; margin: 12px 0 0; font-size: 14px; font-weight: bold; }
+
+@media (max-width: 480px){
+    .card-missao{ width: 100%; }
+}
+    </style>
+</head>
+<body>
+
+    <div class="topo">
+        <h1>Combo de missões</h1>
+        <div>
+            <a class="voltar" href="historico.html">Ver histórico</a>
+            &nbsp;&nbsp;
+            <a class="voltar" href="index.html">&larr; Voltar às missões</a>
+        </div>
+    </div>
+
+    <!-- ETAPA 1: escolher as missões do combo -->
+    <section class="caixa" id="etapa-escolha">
+        <h2>Escolha as missões</h2>
+        <p class="dica">Marque as missões que fazem parte do combo.</p>
+
+        <div class="lista-missoes" id="lista-missoes"></div>
+
+        <div class="acoes">
+            <button class="btn" id="btn-todas" type="button">Selecionar todas</button>
+            <button class="btn" id="btn-limpar" type="button">Limpar</button>
+            <button class="btn btn-principal" id="btn-iniciar" type="button" disabled>Iniciar combo</button>
+        </div>
+    </section>
+
+    <!-- ETAPA 2: placar de cada missão + gráfico -->
+    <section id="etapa-placar" hidden>
+        <div class="acoes">
+            <button class="btn btn-principal" id="btn-grafico" type="button">📊 Gerar Gráfico</button>
+            <button class="btn" id="btn-zerar" type="button">Zerar placar</button>
+            <button class="btn" id="btn-trocar" type="button">Trocar missões</button>
+        </div>
+
+        <div class="cards-missoes" id="cards-missoes"></div>
+
+        <div class="caixa salvar-combo">
+            <h2>Salvar combo</h2>
+            <p class="dica">Guarda o placar no banco de dados e deixa o resultado disponível no histórico, de qualquer aparelho.</p>
+            <div class="linha-salvar">
+                <input type="text" id="nome-combo" maxlength="60" placeholder="Nome do combo (ex.: Treino de quinta)" aria-label="Nome do combo">
+                <button class="btn btn-principal" id="btn-salvar" type="button">💾 Salvar combo</button>
+            </div>
+            <p id="msg-salvar" role="status"></p>
+        </div>
+
+        <div class="caixa grafico-combo" id="grafico-combo" hidden>
+            <h2>Resultado do combo</h2>
+            <div class="pizza-css" id="pizza" role="img" aria-label="Gráfico de pizza com o total de acertos, erros e incompletas do combo"></div>
+
+            <div class="grafico-legendas">
+                <div class="legenda-item"><div class="quadradinho c-acertos"></div> Acertos: <span id="leg-acertos">0 (0%)</span></div>
+                <div class="legenda-item"><div class="quadradinho c-erros"></div> Erros: <span id="leg-erros">0 (0%)</span></div>
+                <div class="legenda-item"><div class="quadradinho c-incompletas"></div> Incompletas: <span id="leg-incompletas">0 (0%)</span></div>
+            </div>
+
+            <div class="por-missao">
+                <h3>Por missão</h3>
+                <div id="barras"></div>
+            </div>
+        </div>
+    </section>
+
+    <script src="supabase.js"></script>
+    <script>
+        const TOTAL_MISSOES = 15; // mesmo número do index.html
+        const TIPOS = ['acertos', 'erros', 'incompletas'];
+        const ROTULOS = {
+            acertos: '🎯 Acertos',
+            erros: '❌ Erros',
+            incompletas: '⏳ Incompleta'
+        };
+
+        const placar = {};          // placar[n] = { acertos, erros, incompletas }
+        let selecionadas = [];      // números das missões do combo
+        let graficoVisivel = false;
+
+        const etapaEscolha = document.getElementById('etapa-escolha');
+        const etapaPlacar = document.getElementById('etapa-placar');
+        const lista = document.getElementById('lista-missoes');
+        const btnIniciar = document.getElementById('btn-iniciar');
+        const cards = document.getElementById('cards-missoes');
+        const graficoCaixa = document.getElementById('grafico-combo');
+
+        // ===== Etapa 1: lista de missões =====
+        for (let n = 1; n <= TOTAL_MISSOES; n++) {
+            lista.insertAdjacentHTML('beforeend', `
+                <label class="chip">
+                    <input type="checkbox" value="${n}">
+                    <span>Missão ${n}</span>
+                </label>
+            `);
+        }
+
+        function atualizarSelecao() {
+            const marcadas = lista.querySelectorAll('input:checked').length;
+            btnIniciar.disabled = marcadas === 0;
+            btnIniciar.textContent = marcadas === 0
+                ? 'Iniciar combo'
+                : `Iniciar combo (${marcadas} ${marcadas === 1 ? 'missão' : 'missões'})`;
+        }
+
+        function marcarTodas(valor) {
+            lista.querySelectorAll('input').forEach(i => i.checked = valor);
+            atualizarSelecao();
+        }
+
+        lista.addEventListener('change', atualizarSelecao);
+        document.getElementById('btn-todas').addEventListener('click', () => marcarTodas(true));
+        document.getElementById('btn-limpar').addEventListener('click', () => marcarTodas(false));
+
+        // ===== Etapa 2: placar =====
+        btnIniciar.addEventListener('click', () => {
+            selecionadas = [...lista.querySelectorAll('input:checked')]
+                .map(i => Number(i.value))
+                .sort((a, b) => a - b);
+
+            selecionadas.forEach(n => {
+                if (!placar[n]) placar[n] = { acertos: 0, erros: 0, incompletas: 0 };
+            });
+
+            desenharCards();
+            etapaEscolha.hidden = true;
+            etapaPlacar.hidden = false;
+            if (graficoVisivel) desenharGrafico();
+        });
+
+        document.getElementById('btn-trocar').addEventListener('click', () => {
+            etapaPlacar.hidden = true;
+            etapaEscolha.hidden = false;
+        });
+
+        document.getElementById('btn-zerar').addEventListener('click', () => {
+            if (!confirm('Zerar o placar de todas as missões do combo?')) return;
+            selecionadas.forEach(n => placar[n] = { acertos: 0, erros: 0, incompletas: 0 });
+            desenharCards();
+            if (graficoVisivel) desenharGrafico();
+        });
+
+        document.getElementById('btn-grafico').addEventListener('click', () => {
+            graficoVisivel = true;
+            graficoCaixa.hidden = false;
+            desenharGrafico();
+            graficoCaixa.scrollIntoView({ block: 'nearest' });
+        });
+
+        function desenharCards() {
+            cards.innerHTML = selecionadas.map(n => `
+                <article class="caixa card-missao">
+                    <h2>Missão ${n}</h2>
+                    ${TIPOS.map(tipo => `
+                        <div class="contador-linha ${tipo}">
+                            <span class="contador-label">${ROTULOS[tipo]}</span>
+                            <span class="contador-valor" id="v-${n}-${tipo}">${placar[n][tipo]}</span>
+                            <div class="botoes-controle">
+                                <button class="btn-contador btn-subtrair" type="button"
+                                    data-n="${n}" data-tipo="${tipo}" data-delta="-1"
+                                    aria-label="Diminuir ${tipo} da missão ${n}">-</button>
+                                <button class="btn-contador btn-somar" type="button"
+                                    data-n="${n}" data-tipo="${tipo}" data-delta="1"
+                                    aria-label="Aumentar ${tipo} da missão ${n}">+</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </article>
+            `).join('');
+        }
+
+        cards.addEventListener('click', (e) => {
+            const botao = e.target.closest('button[data-tipo]');
+            if (!botao) return;
+
+            const n = Number(botao.dataset.n);
+            const tipo = botao.dataset.tipo;
+            const novo = placar[n][tipo] + Number(botao.dataset.delta);
+            if (novo < 0) return;
+
+            placar[n][tipo] = novo;
+            btnSalvar.disabled = false;
+            document.getElementById(`v-${n}-${tipo}`).textContent = novo;
+            if (graficoVisivel) desenharGrafico();
+        });
+
+        // ===== Salvar no banco =====
+        const campoNome = document.getElementById('nome-combo');
+        const btnSalvar = document.getElementById('btn-salvar');
+        const msgSalvar = document.getElementById('msg-salvar');
+
+        function mensagem(texto, erro = false) {
+            msgSalvar.textContent = texto;
+            msgSalvar.style.color = erro ? 'var(--vermelho-erro)' : 'var(--verde-tec-ninjas)';
+        }
+
+        // Depois de salvar, o botão só volta se o nome ou o placar mudarem (evita salvar duas vezes)
+        campoNome.addEventListener('input', () => { btnSalvar.disabled = false; });
+
+        btnSalvar.addEventListener('click', async () => {
+            const nome = campoNome.value.trim();
+            if (!nome) {
+                mensagem('Dê um nome ao combo antes de salvar.', true);
+                campoNome.focus();
+                return;
+            }
+
+            btnSalvar.disabled = true;
+            mensagem('Salvando...');
+
+            try {
+                const linhas = selecionadas.map(n => ({ missao: n, ...placar[n] }));
+                await salvarCombo(nome, linhas);
+                mensagem('Combo salvo! Ele já aparece no histórico.');
+            } catch (erro) {
+                console.error(erro);
+                mensagem('Não foi possível salvar. Confira a internet e se o script SQL foi executado no Supabase.', true);
+                btnSalvar.disabled = false;
+            }
+        });
+
+        // ===== Gráfico =====
+        function formatarPct(valor, total) {
+            return total === 0 ? '0%' : `${((valor / total) * 100).toFixed(1)}%`;
+        }
+
+        function desenharGrafico() {
+            // Soma de todas as missões do combo
+            const soma = { acertos: 0, erros: 0, incompletas: 0 };
+            selecionadas.forEach(n => TIPOS.forEach(t => soma[t] += placar[n][t]));
+            const total = soma.acertos + soma.erros + soma.incompletas;
+
+            TIPOS.forEach(t => {
+                document.getElementById(`leg-${t}`).textContent =
+                    `${soma[t]} (${formatarPct(soma[t], total)})`;
+            });
+
+            const pizza = document.getElementById('pizza');
+            if (total === 0) {
+                pizza.style.background = 'var(--cinza)';
+            } else {
+                const fimAcertos = (soma.acertos / total) * 360;
+                const fimErros = fimAcertos + (soma.erros / total) * 360;
+                pizza.style.background = `conic-gradient(
+                    var(--verde-tec-ninjas) 0deg ${fimAcertos}deg,
+                    var(--vermelho-erro) ${fimAcertos}deg ${fimErros}deg,
+                    var(--laranja) ${fimErros}deg 360deg
+                )`;
+            }
+
+            // Barra empilhada de cada missão
+            document.getElementById('barras').innerHTML = selecionadas.map(n => {
+                const p = placar[n];
+                const totalMissao = p.acertos + p.erros + p.incompletas;
+                const segmentos = totalMissao === 0 ? '' : TIPOS.map(t => `
+                    <div class="c-${t}" style="width:${(p[t] / totalMissao) * 100}%"
+                         title="${t}: ${p[t]}"></div>
+                `).join('');
+                return `
+                    <div class="linha-barra">
+                        <span class="rotulo-barra">M${n}</span>
+                        <div class="barra">${segmentos}</div>
+                        <span class="total-barra">${totalMissao}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+
+</body>
+</html>

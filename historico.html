@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de combos | TEC_NINJAS</title>
+    <style>
+:root{
+    --verde-tec-ninjas:#a3e500;
+    --azul-escuro-acinzentado:#1c2331;
+    --laranja:#ff5e00;
+    --branco:#ffffff;
+    --verde-escuro:#05472a;
+    --vermelho-erro:#ff3b30;
+    --cinza:#4a5568;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+    margin: 0;
+    padding: 30px 16px 60px;
+    background-color: var(--verde-escuro);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--branco);
+}
+
+.topo{
+    max-width: 1100px;
+    margin: 0 auto 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.topo h1{ margin: 0; font-size: 26px; color: var(--verde-tec-ninjas); }
+.voltar{ color: var(--verde-tec-ninjas); font-weight: bold; text-decoration: none; }
+.voltar:hover{ text-decoration: underline; }
+
+.btn{
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: var(--verde-tec-ninjas);
+    color: var(--azul-escuro-acinzentado);
+}
+.btn:hover:not(:disabled){ opacity: .9; }
+.btn:disabled{ opacity: .4; cursor: default; }
+.btn:focus-visible, .voltar:focus-visible{ outline: 3px solid var(--branco); outline-offset: 3px; }
+
+#aviso{
+    max-width: 1100px;
+    margin: 0 auto 20px;
+    font-weight: bold;
+    text-align: center;
+}
+#aviso.erro{ color: var(--vermelho-erro); }
+
+.lista-combos{
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.caixa{
+    width: 340px;
+    background-color: var(--azul-escuro-acinzentado);
+    border: 2px solid var(--verde-tec-ninjas);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.caixa h2{ margin: 0; font-size: 20px; color: var(--verde-tec-ninjas); text-align: center; word-break: break-word; }
+.data{ margin: 4px 0 0; font-size: 13px; color: #a0aec0; }
+
+.pizza-css{
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: var(--cinza);
+    margin: 18px 0;
+}
+
+.grafico-legendas{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: bold;
+}
+.legenda-item{ display: flex; align-items: center; gap: 6px; }
+.quadradinho{ width: 12px; height: 12px; border-radius: 3px; }
+.c-acertos{ background-color: var(--verde-tec-ninjas); }
+.c-erros{ background-color: var(--vermelho-erro); }
+.c-incompletas{ background-color: var(--laranja); }
+
+.por-missao{ width: 100%; margin-top: 20px; }
+.por-missao h3{ margin: 0 0 8px; font-size: 14px; color: var(--verde-tec-ninjas); }
+.linha-barra{ display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 12px; }
+.rotulo-barra{ width: 34px; font-weight: bold; }
+.barra{ flex: 1; display: flex; height: 12px; border-radius: 6px; overflow: hidden; background-color: var(--cinza); }
+.total-barra{ width: 28px; text-align: right; color: #a0aec0; }
+
+@media (max-width: 480px){
+    .caixa{ width: 100%; }
+}
+    </style>
+</head>
+<body>
+
+    <div class="topo">
+        <h1>Histórico de combos</h1>
+        <div>
+            <button class="btn" id="btn-atualizar" type="button">Atualizar</button>
+            &nbsp;&nbsp;
+            <a class="voltar" href="combo.html">Novo combo</a>
+            &nbsp;&nbsp;
+            <a class="voltar" href="index.html">&larr; Voltar às missões</a>
+        </div>
+    </div>
+
+    <p id="aviso" role="status"></p>
+    <section class="lista-combos" id="lista-combos"></section>
+
+    <script src="supabase.js"></script>
+    <script>
+        const TIPOS = ['acertos', 'erros', 'incompletas'];
+        const ROTULOS = { acertos: 'Acertos', erros: 'Erros', incompletas: 'Incompletas' };
+
+        const aviso = document.getElementById('aviso');
+        const lista = document.getElementById('lista-combos');
+        const btnAtualizar = document.getElementById('btn-atualizar');
+
+        // Os nomes dos combos são digitados por qualquer pessoa, então sempre passam por aqui
+        function esc(texto) {
+            return String(texto).replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
+        function pct(valor, total) {
+            return total === 0 ? '0%' : `${((valor / total) * 100).toFixed(1)}%`;
+        }
+
+        function mostrarAviso(texto, erro = false) {
+            aviso.textContent = texto;
+            aviso.className = erro ? 'erro' : '';
+        }
+
+        function montarCard(combo) {
+            const missoes = [...combo.combo_missoes].sort((a, b) => a.missao - b.missao);
+
+            const soma = { acertos: 0, erros: 0, incompletas: 0 };
+            missoes.forEach(m => TIPOS.forEach(t => soma[t] += m[t]));
+            const total = soma.acertos + soma.erros + soma.incompletas;
+
+            let fundo = 'var(--cinza)';
+            if (total > 0) {
+                const fimAcertos = (soma.acertos / total) * 360;
+                const fimErros = fimAcertos + (soma.erros / total) * 360;
+                fundo = `conic-gradient(
+                    var(--verde-tec-ninjas) 0deg ${fimAcertos}deg,
+                    var(--vermelho-erro) ${fimAcertos}deg ${fimErros}deg,
+                    var(--laranja) ${fimErros}deg 360deg
+                )`;
+            }
+
+            const data = new Date(combo.criado_em).toLocaleString('pt-BR', {
+                dateStyle: 'short', timeStyle: 'short'
+            });
+
+            const legendas = TIPOS.map(t => `
+                <div class="legenda-item">
+                    <div class="quadradinho c-${t}"></div>
+                    ${ROTULOS[t]}: ${soma[t]} (${pct(soma[t], total)})
+                </div>
+            `).join('');
+
+            const barras = missoes.map(m => {
+                const totalMissao = m.acertos + m.erros + m.incompletas;
+                const segmentos = totalMissao === 0 ? '' : TIPOS.map(t => `
+                    <div class="c-${t}" style="width:${(m[t] / totalMissao) * 100}%" title="${ROTULOS[t]}: ${m[t]}"></div>
+                `).join('');
+                return `
+                    <div class="linha-barra">
+                        <span class="rotulo-barra">M${m.missao}</span>
+                        <div class="barra">${segmentos}</div>
+                        <span class="total-barra">${totalMissao}</span>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <article class="caixa">
+                    <h2>${esc(combo.nome)}</h2>
+                    <p class="data">${esc(data)} · ${missoes.length} ${missoes.length === 1 ? 'missão' : 'missões'}</p>
+                    <div class="pizza-css" style="background:${fundo}" role="img"
+                         aria-label="Gráfico de pizza do combo ${esc(combo.nome)}"></div>
+                    <div class="grafico-legendas">${legendas}</div>
+                    <div class="por-missao">
+                        <h3>Por missão</h3>
+                        ${barras}
+                    </div>
+                </article>
+            `;
+        }
+
+        async function carregar() {
+            btnAtualizar.disabled = true;
+            mostrarAviso('Carregando...');
+            lista.innerHTML = '';
+
+            try {
+                const combos = (await listarCombos()).filter(c => c.combo_missoes.length > 0);
+
+                if (combos.length === 0) {
+                    mostrarAviso('Nenhum combo salvo ainda. Monte um combo e clique em "Salvar combo".');
+                } else {
+                    mostrarAviso('');
+                    lista.innerHTML = combos.map(montarCard).join('');
+                }
+            } catch (erro) {
+                console.error(erro);
+                mostrarAviso('Não foi possível carregar o histórico. Confira a internet e se o script SQL foi executado no Supabase.', true);
+            } finally {
+                btnAtualizar.disabled = false;
+            }
+        }
+
+        btnAtualizar.addEventListener('click', carregar);
+        carregar();
+    </script>
+
+</body>
+</html>
